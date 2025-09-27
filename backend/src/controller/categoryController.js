@@ -2,20 +2,37 @@ import { json } from 'express';
 import Category from '../models/Category.js';
 
 export const getAllCategory = async (req, res) => {
+    const showAll = req.query.all?.toLowerCase() === 'true';
+    const baseMatch = showAll ? {} : { visible: { $eq: true } };
+
     try {
         const result = await Category.aggregate([
-            // { $match: query },
+            { $match: baseMatch },
             {
                 $facet: {
                     categories: [{ $sort: { createdAt: -1 } }],
-                    visibleCount: [{ $match: { visible: { $eq: true } } }, { $count: "count" }]
+                    totalCount: [{ $count: "count" }]
                 },
             },
         ]);
 
         const categories = result[0].categories;
-        const visibleCount = result[0].visibleCount[0]?.count || 0;
-        res.status(200).json({ categories, visibleCount });
+        const totalCount = result[0].totalCount[0]?.count || 0;
+        res.status(200).json({ categories, totalCount });
+    } catch (error) {
+        console.error("Lỗi khi gọi getAllCategory", error);
+        res.status(500).json({ message: "Lỗi hệ thống" });
+    }
+};
+
+export const getBySlugCategory = async (req, res) => {
+    try {
+        const { slug } = req.params;
+        const category = await Category.findOne({ slug: slug, visible: { $eq: true } });
+        if (!category) {
+            return res.status(404).json({ message: "Danh mục không tồn tại" });
+        }
+        res.status(200).json(category);
     } catch (error) {
         console.error("Lỗi khi gọi getAllCategory", error);
         res.status(500).json({ message: "Lỗi hệ thống" });
@@ -30,6 +47,27 @@ export const createCategory = async (req, res) => {
         res.status(200).json(newCate);
     } catch (error) {
         console.error("Lỗi khi createCategory", error);
+        res.status(500).json({ message: "Lỗi hệ thống: " });
+    }
+};
+
+export const updateCategory = async (req, res) => {
+    try {
+        const { name, parentId } = req.body;
+        const result = await Category.findByIdAndUpdate(
+            req.params.id,
+            { name, parentId },
+            { new: true }
+        );
+        if (!result) {
+            return res.status(404).json({ message: "Danh mục không tồn tại!" });
+        }
+        res.status(200).json({
+            message: "Đã cập nhật bản ghi thành công",
+            category: result
+        });
+    } catch (error) {
+        console.error("Lỗi khi updateCategory", error);
         res.status(500).json({ message: "Lỗi hệ thống: " });
     }
 };
