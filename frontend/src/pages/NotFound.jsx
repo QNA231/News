@@ -1,6 +1,6 @@
 import React from 'react';
-import FuzzyText from '../components/FuzzyText';
-import Galaxy from '../components/Galaxy';
+import FuzzyText from '@/components/FuzzyText';
+import Galaxy from '@/components/Galaxy';
 
 const NotFound = () => {
     return (

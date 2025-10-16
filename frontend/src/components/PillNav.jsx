@@ -88,7 +88,7 @@ const PillNav = ({
     window.addEventListener('resize', onResize);
 
     if (document.fonts?.ready) {
-      document.fonts.ready.then(layout).catch(() => {});
+      document.fonts.ready.then(layout).catch(() => { });
     }
 
     const menu = mobileMenuRef.current;
@@ -227,7 +227,7 @@ const PillNav = ({
 
   return (
     <div
-      className="absolute top-[1em] z-[1000] w-full left-0 md:w-auto md:left-auto">
+      className="mt-5 top-[1em] z-[1000] w-full left-0 md:w-auto md:left-auto">
       <nav
         className={`w-full md:w-max flex items-center justify-between md:justify-start box-border px-4 md:px-0 ${className}`}
         aria-label="Primary"
@@ -251,7 +251,7 @@ const PillNav = ({
               src={logo}
               alt={logoAlt}
               ref={logoImgRef}
-              className="w-full h-full object-cover block" />
+              className="w-full h-full object-cover block invert" />
           </Link>
         ) : (
           <a
@@ -271,7 +271,7 @@ const PillNav = ({
               src={logo}
               alt={logoAlt}
               ref={logoImgRef}
-              className="w-full h-full object-cover block" />
+              className="w-full h-full object-cover block invert" />
           </a>
         )}
 
